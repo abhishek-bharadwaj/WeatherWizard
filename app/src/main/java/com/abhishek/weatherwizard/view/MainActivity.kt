@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
         tv_current_temp.text = getString(R.string.temp_str, data.current.temp.toInt())
         tv_location.text = data.location.name
         forecastAdapter.updateData(data.forecast.forecastDays.map {
-            Pair(it.date, it.day.avgTemp.toInt())
+            Pair(Util.getDayFromDateString(it.date) ?: it.date, it.day.avgTemp.toInt())
         })
         rv_forecast.animate().translationY((0).toFloat()).setDuration(1200L)
             .setInterpolator(AccelerateDecelerateInterpolator()).start()
