@@ -30,6 +30,17 @@
         android:layout_gravity="center_horizontal"
         android:fontFamily="sans-serif-thin"
         android:lineSpacingMultiplier="1.4"
+        android:textColor="#556799"
         android:textSize="36sp"
         tools:text="Bangalore" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_forecast"
+        android:layout_width="match_parent"
+        android:layout_height="320dp" />
 </LinearLayout>
