@@ -3,6 +3,7 @@ package com.abhishek.weatherwizard.view
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.abhishek.weatherwizard.R
@@ -14,7 +15,7 @@ import com.abhishek.weatherwizard.gone
 import com.abhishek.weatherwizard.visible
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), DataCallback {
+class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
 
     private lateinit var forecastAdapter: ForecastAdapter
 
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity(), DataCallback {
         forecastAdapter = ForecastAdapter(this)
         rv_forecast.layoutManager = LinearLayoutManager(this)
         rv_forecast.adapter = forecastAdapter
+        btn_retry.setOnClickListener(this)
 
         requestData()
     }
@@ -35,6 +37,12 @@ class MainActivity : AppCompatActivity(), DataCallback {
 
     override fun onError(e: Throwable) {
         setUpErrorUI()
+    }
+
+    override fun onClick(view: View?) {
+        when (view) {
+            btn_retry -> requestData()
+        }
     }
 
     private fun requestData() {
