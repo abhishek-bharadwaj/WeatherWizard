@@ -1,4 +1,4 @@
-package com.abhishek.weatherwizard
+package com.abhishek.weatherwizard.data.model
 
 import com.google.gson.annotations.SerializedName
 

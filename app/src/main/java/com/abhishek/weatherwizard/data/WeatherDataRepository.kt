@@ -1,29 +1,25 @@
-package com.abhishek.weatherwizard
+package com.abhishek.weatherwizard.data
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import com.abhishek.weatherwizard.data.api.Api
+import com.abhishek.weatherwizard.data.model.WeatherData
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class MainActivity : AppCompatActivity() {
+object WeatherDataRepository {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
+    fun getWeatherData(callback: DataCallback) {
         Api.getWeatherData("paris")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<WeatherData> {
                 override fun onSuccess(t: WeatherData) {
-                    print(t.toString())
+                    callback.onSuccess(t)
                 }
 
                 override fun onError(e: Throwable) {
-                    print(e.toString())
+                    callback.onError(e)
                 }
 
                 override fun onSubscribe(d: Disposable) {
@@ -31,6 +27,4 @@ class MainActivity : AppCompatActivity() {
                 }
             })
     }
-
-    fun print(text: String) = Log.d("OOOOOOOOOOO", text)
 }

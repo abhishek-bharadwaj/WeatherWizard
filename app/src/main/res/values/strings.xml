@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Weather Wizard</string>
+
+    <string name="temp_str">%d\u00B0</string>
 </resources>

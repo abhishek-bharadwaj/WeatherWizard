@@ -1,5 +1,6 @@
-package com.abhishek.weatherwizard
+package com.abhishek.weatherwizard.data.api
 
+import com.abhishek.weatherwizard.data.model.WeatherData
 import com.google.gson.GsonBuilder
 import io.reactivex.Single
 import okhttp3.OkHttpClient
