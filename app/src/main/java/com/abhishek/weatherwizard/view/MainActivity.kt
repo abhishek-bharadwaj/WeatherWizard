@@ -3,7 +3,9 @@ package com.abhishek.weatherwizard.view
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
 import com.abhishek.weatherwizard.R
+import com.abhishek.weatherwizard.Util
 import com.abhishek.weatherwizard.data.DataCallback
 import com.abhishek.weatherwizard.data.WeatherDataRepository
 import com.abhishek.weatherwizard.data.model.WeatherData
@@ -35,6 +37,11 @@ class MainActivity : AppCompatActivity(), DataCallback {
     }
 
     private fun requestData() {
+        if (!Util.isNetworkAvailable(this)) {
+            Toast.makeText(this, "Please check internet connectivity..", Toast.LENGTH_SHORT).show()
+            setUpErrorUI()
+            return
+        }
         iv_loading.visible()
         ll_success_ui.gone()
         ll_failure_ui.gone()

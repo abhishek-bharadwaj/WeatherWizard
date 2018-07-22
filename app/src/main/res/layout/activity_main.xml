@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f5f6f7"
     android:orientation="vertical"
     tools:context=".view.MainActivity">
 
@@ -11,8 +12,7 @@
         android:id="@+id/ll_success_ui"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:visibility="gone">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_current_temp"
@@ -59,7 +59,8 @@
         android:background="#e85959"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        tools:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,5 +85,6 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_loading" />
+        android:src="@drawable/ic_loading"
+        tools:visibility="gone" />
 </FrameLayout>
