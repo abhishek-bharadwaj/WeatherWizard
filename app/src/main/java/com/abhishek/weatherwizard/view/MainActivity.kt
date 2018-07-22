@@ -1,6 +1,7 @@
 package com.abhishek.weatherwizard.view
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -117,6 +118,7 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
         permissionDialog?.show()
     }
 
+    @SuppressLint("MissingPermission")
     private fun requestData() {
         if (!Util.isNetworkAvailable(this)) {
             Toast.makeText(this, "Please check internet connectivity..", Toast.LENGTH_SHORT).show()
@@ -129,8 +131,14 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 Log.e("OOOOOOOO", location?.latitude?.toString() + " - " + location?.longitude)
+                if (location != null) {
+                    WeatherDataRepository.getWeatherData(this, location)
+                } else {
+                    Toast.makeText(this,
+                        "Something went wrong please try again later..",
+                        Toast.LENGTH_SHORT).show()
+                }
             }
-        WeatherDataRepository.getWeatherData(this)
     }
 
     private fun setUpSuccessUI(data: WeatherData) {
@@ -138,7 +146,7 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
         ll_success_ui.visible()
         tv_current_temp.text = getString(R.string.temp_str, data.current.temp.toInt())
         tv_location.text = data.location.name
-        forecastAdapter.updateData(data.forecast.forecastDays.map {
+        forecastAdapter.updateData(data.forecast.forecastDays.takeLast(4).map {
             Pair(Util.getDayFromDateString(it.date) ?: it.date, it.day.avgTemp.toInt())
         })
         rv_forecast.animate().translationY((0).toFloat()).setDuration(1200L)

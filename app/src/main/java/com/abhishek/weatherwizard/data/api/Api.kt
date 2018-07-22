@@ -31,6 +31,6 @@ object Api {
 
     interface ApiService {
         @GET("forecast.json?key=3b38db11aa2f4b3198151314182107")
-        fun getWeatherData(@Query("q") city: String, @Query("days") days: Int = 4): Single<WeatherData>
+        fun getWeatherData(@Query("q") city: String, @Query("days") days: Int = 5): Single<WeatherData>
     }
 }
