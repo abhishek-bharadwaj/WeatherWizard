@@ -3,6 +3,7 @@ package com.abhishek.weatherwizard.view
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.abhishek.weatherwizard.R
 import com.abhishek.weatherwizard.Util
@@ -42,16 +43,15 @@ class MainActivity : AppCompatActivity(), DataCallback {
             setUpErrorUI()
             return
         }
+        resetState()
         iv_loading.visible()
-        ll_success_ui.gone()
-        ll_failure_ui.gone()
+        iv_loading.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_anim))
         WeatherDataRepository.getWeatherData(this)
     }
 
     private fun setUpSuccessUI(data: WeatherData) {
+        resetState()
         ll_success_ui.visible()
-        ll_failure_ui.gone()
-        iv_loading.gone()
         tv_current_temp.text = getString(R.string.temp_str, data.current.temp.toInt())
         tv_location.text = data.location.name
         forecastAdapter.updateData(data.forecast.forecastDays.map {
@@ -60,8 +60,14 @@ class MainActivity : AppCompatActivity(), DataCallback {
     }
 
     private fun setUpErrorUI() {
+        resetState()
         ll_failure_ui.visible()
+    }
+
+    private fun resetState() {
+        ll_failure_ui.gone()
         ll_success_ui.gone()
         iv_loading.gone()
+        iv_loading.clearAnimation()
     }
 }
