@@ -2,4 +2,6 @@
     <string name="app_name">Weather Wizard</string>
 
     <string name="temp_str">%d\u00B0</string>
+    <string name="retry">retry</string>
+    <string name="something_went_wrong_at_our_end">Something went wrong at our end!</string>
 </resources>
