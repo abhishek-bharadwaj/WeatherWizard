@@ -8,6 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 object Api {
 
@@ -17,7 +18,7 @@ object Api {
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
-        Retrofit.Builder().baseUrl("ttp://api.apixu.com/v1")
+        Retrofit.Builder().baseUrl("https://api.apixu.com/v1/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().serializeNulls().create()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(client)
@@ -25,10 +26,10 @@ object Api {
             .create(ApiService::class.java)
     }
 
-    fun getWeatherData(ownerName: String) = apiService.getWeatherData(ownerName)
+    fun getWeatherData(city: String) = apiService.getWeatherData(city)
 
     interface ApiService {
-        @GET("forecast.json?key=3b38db11aa2f4b3198151314182107&q=Paris")
-        fun getWeatherData(city: String): Single<WeatherData>
+        @GET("forecast.json?key=3b38db11aa2f4b3198151314182107")
+        fun getWeatherData(@Query("q") city: String, @Query("days") days: Int = 4): Single<WeatherData>
     }
 }
