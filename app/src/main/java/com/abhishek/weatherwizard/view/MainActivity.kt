@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.abhishek.weatherwizard.R
@@ -65,6 +66,8 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
         forecastAdapter.updateData(data.forecast.forecastDays.map {
             Pair(it.date, it.day.avgTemp.toInt())
         })
+        rv_forecast.animate().translationY((0).toFloat()).setDuration(1200L)
+            .setInterpolator(AccelerateDecelerateInterpolator()).start()
     }
 
     private fun setUpErrorUI() {

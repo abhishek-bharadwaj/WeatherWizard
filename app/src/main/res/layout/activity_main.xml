@@ -49,7 +49,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_forecast"
             android:layout_width="match_parent"
-            android:layout_height="320dp" />
+            android:layout_height="@dimen/rv_height"
+            android:translationY="@dimen/rv_height" />
     </LinearLayout>
 
     <LinearLayout
