@@ -1,5 +1,6 @@
 package com.abhishek.weatherwizard.data.repository.room
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 
 @Dao
@@ -9,7 +10,7 @@ interface WeatherDataDao {
     fun insertWeatherData(weatherData: WeatherData)
 
     @Query("select * from WEATHER_DATA where lat=:lat AND lon=:lon")
-    fun getWeatherData(lat: Double, lon: Double): WeatherData
+    fun getWeatherData(lat: Double, lon: Double): LiveData<WeatherData>
 
     @Update
     fun updateWeatherData(weatherData: WeatherData)
