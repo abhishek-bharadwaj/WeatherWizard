@@ -1,0 +1,30 @@
+package com.abhishek.weatherwizard.data.repository.room
+
+import android.arch.persistence.room.Room
+import android.arch.persistence.room.RoomDatabase
+import com.abhishek.weatherwizard.MyApplication
+
+abstract class WeatherDatabase : RoomDatabase() {
+
+    abstract fun weatherDataDao(): WeatherDataDao
+
+    private object HOLDER {
+
+        val INSTANCE =
+            Room.databaseBuilder(MyApplication.mContext, WeatherDatabase::class.java, "weather.db")
+                .build()
+
+    }
+
+    companion object {
+        private val INSTANCE: WeatherDatabase by lazy { HOLDER.INSTANCE }
+
+        @Synchronized
+        fun getInstance(): WeatherDatabase = INSTANCE
+
+        fun clearStreaksData() {
+            val weatherDatabase = getInstance()
+            weatherDatabase.weatherDataDao().deleteAll()
+        }
+    }
+}
