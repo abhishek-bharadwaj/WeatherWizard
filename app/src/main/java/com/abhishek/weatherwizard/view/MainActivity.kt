@@ -19,7 +19,7 @@ import com.abhishek.weatherwizard.R
 import com.abhishek.weatherwizard.Util
 import com.abhishek.weatherwizard.data.DataCallback
 import com.abhishek.weatherwizard.data.WeatherDataRepository
-import com.abhishek.weatherwizard.data.model.WeatherData
+import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
 import com.abhishek.weatherwizard.gone
 import com.abhishek.weatherwizard.visible
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
         checkForPermissionAndRequestData()
     }
 
-    override fun onSuccess(data: WeatherData) {
+    override fun onSuccess(data: WeatherDataApiResponse) {
         setUpSuccessUI(data)
     }
 
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
             }
     }
 
-    private fun setUpSuccessUI(data: WeatherData) {
+    private fun setUpSuccessUI(data: WeatherDataApiResponse) {
         resetState()
         ll_success_ui.visible()
         tv_current_temp.text = getString(R.string.temp_str, data.current.temp.toInt())

@@ -1,8 +1,8 @@
 package com.abhishek.weatherwizard.data
 
 import android.location.Location
-import com.abhishek.weatherwizard.data.api.Api
-import com.abhishek.weatherwizard.data.model.WeatherData
+import com.abhishek.weatherwizard.data.repository.api.Api
+import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -14,8 +14,8 @@ object WeatherDataRepository {
         Api.getWeatherData("${location.latitude},${location.longitude}")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : SingleObserver<WeatherData> {
-                override fun onSuccess(t: WeatherData) {
+            .subscribe(object : SingleObserver<WeatherDataApiResponse> {
+                override fun onSuccess(t: WeatherDataApiResponse) {
                     callback.onSuccess(t)
                 }
 

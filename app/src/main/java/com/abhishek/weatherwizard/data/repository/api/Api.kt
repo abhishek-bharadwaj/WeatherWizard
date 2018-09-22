@@ -1,6 +1,6 @@
-package com.abhishek.weatherwizard.data.api
+package com.abhishek.weatherwizard.data.repository.api
 
-import com.abhishek.weatherwizard.data.model.WeatherData
+import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
 import com.google.gson.GsonBuilder
 import io.reactivex.Single
 import okhttp3.OkHttpClient
@@ -31,6 +31,6 @@ object Api {
 
     interface ApiService {
         @GET("forecast.json?key=3b38db11aa2f4b3198151314182107")
-        fun getWeatherData(@Query("q") city: String, @Query("days") days: Int = 5): Single<WeatherData>
+        fun getWeatherData(@Query("q") city: String, @Query("days") days: Int = 5): Single<WeatherDataApiResponse>
     }
 }
