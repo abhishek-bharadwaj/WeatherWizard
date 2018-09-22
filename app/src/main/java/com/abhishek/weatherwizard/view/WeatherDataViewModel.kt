@@ -12,6 +12,6 @@ class WeatherDataViewModel : ViewModel(), LifecycleObserver {
     private val weatherLiveData = MutableLiveData<Resource<WeatherData>>()
 
     fun getWeatherLiveData(latitude: Double, longitude: Double): MutableLiveData<Resource<WeatherData>> {
-        weatherLiveData.value?.status = LiveDataStatus.LOADING
+
     }
 }

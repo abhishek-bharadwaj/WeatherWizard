@@ -30,7 +30,7 @@ class WeatherDataDBHelper {
         }
     }
 
-    fun getWeatherData(latitude: Double, longitude: Double): LiveData<Resource<WeatherData>> {
+    fun getWeatherData(latitude: Double, longitude: Double): LiveData<WeatherData> {
         Single.defer {
             Single.just(weatherDatabase.weatherDataDao().getWeatherData(latitude, latitude))
         }.subscribeOn(Schedulers.io())
@@ -41,6 +41,10 @@ class WeatherDataDBHelper {
                 }
 
                 override fun onError(e: Throwable) {
+
+                }
+
+                override fun onSubscribe(d: Disposable) {
 
                 }
             })
