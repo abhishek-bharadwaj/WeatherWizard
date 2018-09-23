@@ -8,7 +8,6 @@ import com.abhishek.weatherwizard.data.repository.room.WeatherData
 import com.abhishek.weatherwizard.data.repository.room.WeatherDatabase
 import io.reactivex.Single
 import io.reactivex.SingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
@@ -24,7 +23,6 @@ class WeatherDataInteractor {
     private fun getLatestWeatherDataFromApi(latitude: Double, longitude: Double) {
         Api.getWeatherData(latitude, longitude)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<retrofit2.Response<WeatherDataApiResponse>> {
                 override fun onSuccess(t: retrofit2.Response<WeatherDataApiResponse>) {
                     if (!t.isSuccessful) {
