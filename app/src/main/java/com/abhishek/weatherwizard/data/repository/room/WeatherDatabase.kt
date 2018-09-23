@@ -22,7 +22,7 @@ abstract class WeatherDatabase : RoomDatabase() {
         @Synchronized
         fun getInstance(): WeatherDatabase = INSTANCE
 
-        fun clearStreaksData() {
+        fun clearWeatherData() {
             val weatherDatabase = getInstance()
             weatherDatabase.weatherDataDao().deleteAll()
         }
