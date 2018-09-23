@@ -2,6 +2,8 @@ package com.abhishek.weatherwizard.view
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -12,21 +14,19 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.abhishek.weatherwizard.R
 import com.abhishek.weatherwizard.Util
-import com.abhishek.weatherwizard.data.DataCallback
-import com.abhishek.weatherwizard.data.WeatherDataRepository
-import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
+import com.abhishek.weatherwizard.data.repository.livedata.LiveDataStatus
+import com.abhishek.weatherwizard.data.repository.room.WeatherData
 import com.abhishek.weatherwizard.gone
 import com.abhishek.weatherwizard.visible
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private const val PERMISSION_REQUEST_LOCATION = 34142
@@ -35,28 +35,26 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
     private var permissionDialog: AlertDialog? = null
     private lateinit var forecastAdapter: ForecastAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var viewModel: WeatherDataViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewModel = ViewModelProviders.of(this).get(WeatherDataViewModel::class.java)
+        lifecycle.addObserver(viewModel)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        checkForPermissionAndRequestData()
+        initView()
+    }
+
+    private fun initView() {
         forecastAdapter = ForecastAdapter(this)
         rv_forecast.layoutManager = LinearLayoutManager(this)
         rv_forecast.adapter = forecastAdapter
         btn_retry.setOnClickListener(this)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         resetState()
         iv_loading.visible()
-
-        checkForPermissionAndRequestData()
-    }
-
-    override fun onSuccess(data: WeatherDataApiResponse) {
-        setUpSuccessUI(data)
-    }
-
-    override fun onError(e: Throwable) {
-        setUpErrorUI()
     }
 
     override fun onClick(view: View?) {
@@ -64,7 +62,6 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
             btn_retry -> checkForPermissionAndRequestData()
         }
     }
-
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<out String>,
@@ -126,13 +123,31 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
             return
         }
         resetState()
-        iv_loading.visible()
-        iv_loading.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_anim))
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 Log.e("OOOOOOOO", location?.latitude?.toString() + " - " + location?.longitude)
                 if (location != null) {
-                    WeatherDataRepository.getWeatherData(this, location)
+                    viewModel.getWeatherLiveData(location.latitude, location.longitude)
+                        .observe(this, Observer {
+                            when (it?.status) {
+                                LiveDataStatus.LOADING -> {
+                                    iv_loading.visible()
+                                    iv_loading.startAnimation(AnimationUtils.loadAnimation(this,
+                                        R.anim.rotate_anim))
+                                }
+
+                                LiveDataStatus.SUCCESS -> {
+                                    if (it.data != null)
+                                        setUpSuccessUI(it.data)
+                                    else
+                                        setUpErrorUI()
+                                }
+
+                                LiveDataStatus.ERROR -> {
+                                    setUpErrorUI()
+                                }
+                            }
+                        })
                 } else {
                     Toast.makeText(this,
                         "Something went wrong please try again later..",
@@ -141,16 +156,16 @@ class MainActivity : AppCompatActivity(), DataCallback, View.OnClickListener {
             }
     }
 
-    private fun setUpSuccessUI(data: WeatherDataApiResponse) {
+    private fun setUpSuccessUI(data: WeatherData) {
         resetState()
         ll_success_ui.visible()
-        tv_current_temp.text = getString(R.string.temp_str, data.current.temp.toInt())
-        tv_location.text = data.location.name
-        forecastAdapter.updateData(data.forecast.forecastDays.takeLast(4).map {
-            Pair(Util.getDayFromDateString(it.date) ?: it.date, it.day.avgTemp.toInt())
-        })
-        rv_forecast.animate().translationY((0).toFloat()).setDuration(1200L)
-            .setInterpolator(AccelerateDecelerateInterpolator()).start()
+        tv_current_temp.text = getString(R.string.temp_str, data.currentTmp.toInt())
+        tv_location.text = data.name
+//        forecastAdapter.updateData(data.forecast.forecastDays.takeLast(4).map {
+//            Pair(Util.getDayFromDateString(it.date) ?: it.date, it.day.avgTemp.toInt())
+//        })
+//        rv_forecast.animate().translationY((0).toFloat()).setDuration(1200L)
+//            .setInterpolator(AccelerateDecelerateInterpolator()).start()
     }
 
     private fun setUpErrorUI() {

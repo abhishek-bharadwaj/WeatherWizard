@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import io.reactivex.Single
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -27,10 +28,11 @@ object Api {
             .create(ApiService::class.java)
     }
 
-    fun getWeatherData(city: String) = apiService.getWeatherData(city)
+    fun getWeatherData(latitude: Double, longitude: Double) =
+        apiService.getWeatherData("$latitude,$longitude")
 
     interface ApiService {
         @GET("forecast.json?key=3b38db11aa2f4b3198151314182107")
-        fun getWeatherData(@Query("q") city: String, @Query("days") days: Int = 5): Single<WeatherDataApiResponse>
+        fun getWeatherData(@Query("q") city: String, @Query("days") days: Int = 5): Single<Response<WeatherDataApiResponse>>
     }
 }
