@@ -27,6 +27,5 @@ fun getDayFromDateString(dateString: String): String? {
 
 fun roundTo4DecimalPlaces(value: Double): Double {
     val d = BigDecimal(value)
-    d.setScale(4, BigDecimal.ROUND_HALF_UP)
-    return d.toDouble()
+    return d.setScale(4, BigDecimal.ROUND_HALF_UP).toDouble()
 }

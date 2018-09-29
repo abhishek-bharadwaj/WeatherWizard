@@ -41,8 +41,8 @@ class WeatherDataInteractor {
                     }
                     Log.d(TAG, apiResponse.toString())
                     val data = WeatherData(
-                        latitude = roundTo4DecimalPlaces(apiResponse.location.latitude),
-                        longitude = roundTo4DecimalPlaces(apiResponse.location.longitude),
+                        latitude = roundTo4DecimalPlaces(roundTo4DecimalPlaces(apiResponse.location.latitude)),
+                        longitude = roundTo4DecimalPlaces(roundTo4DecimalPlaces(apiResponse.location.longitude)),
                         name = apiResponse.location.name,
                         region = apiResponse.location.region,
                         country = apiResponse.location.country,

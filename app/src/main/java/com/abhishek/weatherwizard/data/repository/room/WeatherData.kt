@@ -4,7 +4,7 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 
 @Entity(tableName = WEATHER_DATA_TABLE, primaryKeys = [COLUMN_LAT, COLUMN_LON])
-class WeatherData(
+data class WeatherData(
     @ColumnInfo(name = COLUMN_LAT)
     var latitude: Double = 0.0,
     @ColumnInfo(name = COLUMN_LON)

@@ -36,8 +36,8 @@ class WeatherDataViewModel : ViewModel(), LifecycleObserver {
                         Log.e(TAG, "data is null from DB")
                         return
                     }
-                    Log.d(TAG, "Got the data ${t.get().currentTmp}")
-                    weatherLiveData.value = Resource.error("Data not available", t.get())
+                    Log.d(TAG, "Got the data from DB ${t.get().currentTmp}")
+                    weatherLiveData.value = Resource.success(t.get())
                 }
 
                 override fun onError(e: Throwable) {
