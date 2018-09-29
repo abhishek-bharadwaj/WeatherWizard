@@ -17,10 +17,10 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.abhishek.weatherwizard.R
-import com.abhishek.weatherwizard.Util
 import com.abhishek.weatherwizard.data.repository.livedata.LiveDataStatus
 import com.abhishek.weatherwizard.data.repository.room.WeatherData
 import com.abhishek.weatherwizard.gone
+import com.abhishek.weatherwizard.isNetworkAvailable
 import com.abhishek.weatherwizard.visible
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     @SuppressLint("MissingPermission")
     private fun requestData() {
-        if (!Util.isNetworkAvailable(this)) {
+        if (!isNetworkAvailable(this)) {
             Toast.makeText(this, "Please check internet connectivity..", Toast.LENGTH_SHORT).show()
             setUpErrorUI()
             return

@@ -6,6 +6,7 @@ import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
 import com.abhishek.weatherwizard.data.repository.api.Api
 import com.abhishek.weatherwizard.data.repository.room.WeatherData
 import com.abhishek.weatherwizard.data.repository.room.WeatherDatabase
+import com.abhishek.weatherwizard.roundTo4DecimalPlaces
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
@@ -19,7 +20,7 @@ class WeatherDataInteractor {
         getLatestWeatherDataFromApi(latitude, longitude)
         return Single.defer {
             val optional = Optional(weatherDatabase.weatherDataDao().getWeatherData(
-                latitude, longitude))
+                roundTo4DecimalPlaces(latitude), roundTo4DecimalPlaces(longitude)))
             Single.just(optional)
         }
     }
@@ -38,8 +39,8 @@ class WeatherDataInteractor {
                         return
                     }
                     val data = WeatherData(
-                        latitude = apiResponse.location.latitude,
-                        longitude = apiResponse.location.longitude,
+                        latitude = roundTo4DecimalPlaces(apiResponse.location.latitude),
+                        longitude = roundTo4DecimalPlaces(apiResponse.location.longitude),
                         name = apiResponse.location.name,
                         region = apiResponse.location.region,
                         country = apiResponse.location.country,
