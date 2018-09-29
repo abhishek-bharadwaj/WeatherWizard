@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         resetState()
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-                Log.e("OOOOOOOO", location?.latitude?.toString() + " - " + location?.longitude)
+                Log.e(com.abhishek.weatherwizard.TAG, location?.latitude?.toString() + " - " + location?.longitude)
                 if (location != null) {
                     viewModel.getWeatherLiveData(location.latitude, location.longitude)
                         .observe(this, Observer {

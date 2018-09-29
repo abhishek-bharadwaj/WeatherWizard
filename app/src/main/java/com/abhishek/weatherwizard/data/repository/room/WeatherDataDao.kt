@@ -6,7 +6,7 @@ import android.arch.persistence.room.*
 interface WeatherDataDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertWeatherData(weatherData: WeatherData)
+    fun insertWeatherData(weatherData: WeatherData): Long
 
     @Query("select * from WEATHER_DATA where lat=:lat AND lon=:lon")
     fun getWeatherData(lat: Double, lon: Double): WeatherData

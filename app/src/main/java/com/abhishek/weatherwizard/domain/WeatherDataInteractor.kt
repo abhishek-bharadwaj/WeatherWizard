@@ -1,6 +1,7 @@
 package com.abhishek.weatherwizard.domain
 
 import android.util.Log
+import com.abhishek.weatherwizard.TAG
 import com.abhishek.weatherwizard.data.Optional
 import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
 import com.abhishek.weatherwizard.data.repository.api.Api
@@ -31,13 +32,14 @@ class WeatherDataInteractor {
             .subscribe(object : SingleObserver<retrofit2.Response<WeatherDataApiResponse>> {
                 override fun onSuccess(t: retrofit2.Response<WeatherDataApiResponse>) {
                     if (!t.isSuccessful) {
-                        Log.e(this.javaClass.simpleName, "Api call failed.")
+                        Log.e(TAG, "Api call failed.")
                         return
                     }
                     val apiResponse = t.body() ?: kotlin.run {
-                        Log.e(this.javaClass.simpleName, "Body is null")
+                        Log.e(TAG, "Body is null")
                         return
                     }
+                    Log.d(TAG, apiResponse.toString())
                     val data = WeatherData(
                         latitude = roundTo4DecimalPlaces(apiResponse.location.latitude),
                         longitude = roundTo4DecimalPlaces(apiResponse.location.longitude),
@@ -45,11 +47,13 @@ class WeatherDataInteractor {
                         region = apiResponse.location.region,
                         country = apiResponse.location.country,
                         currentTmp = apiResponse.current.temp)
-                    weatherDatabase.weatherDataDao().insertWeatherData(weatherData = data)
+                    val result =
+                        weatherDatabase.weatherDataDao().insertWeatherData(weatherData = data)
+                    Log.d(TAG, result.toString())
                 }
 
                 override fun onError(e: Throwable) {
-                    Log.e(this.javaClass.simpleName, e.toString())
+                    Log.e(TAG, e.toString())
                 }
 
                 override fun onSubscribe(d: Disposable) {
