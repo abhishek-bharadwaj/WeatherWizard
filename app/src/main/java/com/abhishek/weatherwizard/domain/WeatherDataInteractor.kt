@@ -1,7 +1,7 @@
 package com.abhishek.weatherwizard.domain
 
-import android.arch.lifecycle.LiveData
 import android.util.Log
+import com.abhishek.weatherwizard.data.Optional
 import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
 import com.abhishek.weatherwizard.data.repository.api.Api
 import com.abhishek.weatherwizard.data.repository.room.WeatherData
@@ -15,9 +15,13 @@ class WeatherDataInteractor {
 
     private val weatherDatabase = WeatherDatabase.getInstance()
 
-    fun getWeatherData(latitude: Double, longitude: Double): Single<LiveData<WeatherData>> {
+    fun getWeatherData(latitude: Double, longitude: Double): Single<Optional<WeatherData>> {
         getLatestWeatherDataFromApi(latitude, longitude)
-        return Single.just(weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude))
+        return Single.defer {
+            val optional = Optional(weatherDatabase.weatherDataDao().getWeatherData(
+                latitude, longitude))
+            Single.just(optional)
+        }
     }
 
     private fun getLatestWeatherDataFromApi(latitude: Double, longitude: Double) {

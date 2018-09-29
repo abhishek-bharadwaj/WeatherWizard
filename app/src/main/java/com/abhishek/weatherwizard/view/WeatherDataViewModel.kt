@@ -1,9 +1,10 @@
 package com.abhishek.weatherwizard.view
 
 import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.util.Log
+import com.abhishek.weatherwizard.data.Optional
 import com.abhishek.weatherwizard.data.repository.livedata.Resource
 import com.abhishek.weatherwizard.data.repository.room.WeatherData
 import com.abhishek.weatherwizard.domain.WeatherDataInteractor
@@ -28,12 +29,18 @@ class WeatherDataViewModel : ViewModel(), LifecycleObserver {
         interactor.getWeatherData(latitude, longitude)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : SingleObserver<LiveData<WeatherData>> {
-                override fun onSuccess(t: LiveData<WeatherData>) {
-                    weatherLiveData.value = Resource.success(t.value)
+            .subscribe(object : SingleObserver<Optional<WeatherData>> {
+                override fun onSuccess(t: Optional<WeatherData>) {
+                    if (t.isEmpty()) {
+                        Log.e("OOOOOOO", "data is null from DB")
+                        return
+                    }
+                    Log.d("OOOOOOO", "Got the data ${t.get().currentTmp}")
+                    weatherLiveData.value = Resource.error("Data not available", t.get())
                 }
 
                 override fun onError(e: Throwable) {
+                    Log.d("OOOOOOO", e.message ?: "")
                     weatherLiveData.value = Resource.error(e.message, null)
                 }
 
