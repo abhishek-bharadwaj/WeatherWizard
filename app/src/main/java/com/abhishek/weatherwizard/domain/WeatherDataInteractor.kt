@@ -20,8 +20,13 @@ class WeatherDataInteractor {
     fun getWeatherData(latitude: Double, longitude: Double): Single<Optional<WeatherData>> {
         getLatestWeatherDataFromApi(latitude, longitude)
         return Single.defer {
+            Log.v(TAG,
+                "getting data for this ${roundTo4DecimalPlaces(latitude)} ${roundTo4DecimalPlaces(
+                    longitude)}")
             val optional = Optional(weatherDatabase.weatherDataDao().getWeatherData(
                 roundTo4DecimalPlaces(latitude), roundTo4DecimalPlaces(longitude)))
+            Log.v(TAG, "data from db is ${weatherDatabase.weatherDataDao().getWeatherData(
+                roundTo4DecimalPlaces(latitude), roundTo4DecimalPlaces(longitude))}")
             Single.just(optional)
         }
     }
@@ -41,12 +46,14 @@ class WeatherDataInteractor {
                     }
                     Log.d(TAG, apiResponse.toString())
                     val data = WeatherData(
-                        latitude = roundTo4DecimalPlaces(roundTo4DecimalPlaces(apiResponse.location.latitude)),
-                        longitude = roundTo4DecimalPlaces(roundTo4DecimalPlaces(apiResponse.location.longitude)),
+                        latitude = roundTo4DecimalPlaces(latitude),
+                        longitude = roundTo4DecimalPlaces(longitude),
                         name = apiResponse.location.name,
                         region = apiResponse.location.region,
                         country = apiResponse.location.country,
                         currentTmp = apiResponse.current.temp)
+                    Log.v(TAG, "saving this data to DB ${roundTo4DecimalPlaces(latitude)} " +
+                            "${roundTo4DecimalPlaces(longitude)}")
                     val result =
                         weatherDatabase.weatherDataDao().insertWeatherData(weatherData = data)
                     Log.d(TAG, result.toString())
