@@ -1,5 +1,6 @@
 package com.abhishek.weatherwizard.view
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
+@SuppressLint("LogNotTimber")
 class WeatherDataViewModel : ViewModel(), LifecycleObserver {
 
     private val interactor: WeatherDataInteractor = WeatherDataInteractor()
@@ -33,10 +35,8 @@ class WeatherDataViewModel : ViewModel(), LifecycleObserver {
             .subscribe(object : SingleObserver<Optional<WeatherData>> {
                 override fun onSuccess(t: Optional<WeatherData>) {
                     if (t.isEmpty()) {
-                        Log.e(TAG, "data is null from DB")
                         return
                     }
-                    Log.d(TAG, "Got the data from DB ${t.get().currentTmp}")
                     weatherLiveData.value = Resource.success(t.get())
                 }
 

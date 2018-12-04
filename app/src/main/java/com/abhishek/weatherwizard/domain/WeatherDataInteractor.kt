@@ -1,5 +1,6 @@
 package com.abhishek.weatherwizard.domain
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.abhishek.weatherwizard.TAG
 import com.abhishek.weatherwizard.data.Optional
@@ -7,26 +8,23 @@ import com.abhishek.weatherwizard.data.model.WeatherDataApiResponse
 import com.abhishek.weatherwizard.data.repository.api.Api
 import com.abhishek.weatherwizard.data.repository.room.WeatherData
 import com.abhishek.weatherwizard.data.repository.room.WeatherDatabase
-import com.abhishek.weatherwizard.roundTo4DecimalPlaces
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
+@SuppressLint("LogNotTimber")
 class WeatherDataInteractor {
 
     private val weatherDatabase = WeatherDatabase.getInstance()
 
-    fun getWeatherData(latitude: Double, longitude: Double): Single<Optional<WeatherData>> {
+    fun getWeatherData(latitude: Double,
+                       longitude: Double): Single<Optional<WeatherData>> {
         getLatestWeatherDataFromApi(latitude, longitude)
         return Single.defer {
-            Log.v(TAG,
-                "getting data for this ${roundTo4DecimalPlaces(latitude)} ${roundTo4DecimalPlaces(
-                    longitude)}")
-            val optional = Optional(weatherDatabase.weatherDataDao().getWeatherData(
-                roundTo4DecimalPlaces(latitude), roundTo4DecimalPlaces(longitude)))
-            Log.v(TAG, "data from db is ${weatherDatabase.weatherDataDao().getWeatherData(
-                roundTo4DecimalPlaces(latitude), roundTo4DecimalPlaces(longitude))}")
+            val optional = Optional(weatherDatabase.weatherDataDao().getWeatherData())
+            Log.d(TAG,
+                "Got this from db ${weatherDatabase.weatherDataDao().getWeatherData()?.currentTmp}")
             Single.just(optional)
         }
     }
@@ -46,14 +44,13 @@ class WeatherDataInteractor {
                     }
                     Log.d(TAG, apiResponse.toString())
                     val data = WeatherData(
-                        latitude = roundTo4DecimalPlaces(latitude),
-                        longitude = roundTo4DecimalPlaces(longitude),
+                        latitude = latitude,
+                        longitude = longitude,
                         name = apiResponse.location.name,
                         region = apiResponse.location.region,
                         country = apiResponse.location.country,
                         currentTmp = apiResponse.current.temp)
-                    Log.v(TAG, "saving this data to DB ${roundTo4DecimalPlaces(latitude)} " +
-                            "${roundTo4DecimalPlaces(longitude)}")
+                    Log.v(TAG, "saving data to DB")
                     val result =
                         weatherDatabase.weatherDataDao().insertWeatherData(weatherData = data)
                     Log.d(TAG, result.toString())

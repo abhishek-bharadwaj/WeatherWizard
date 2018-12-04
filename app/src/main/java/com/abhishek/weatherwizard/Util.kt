@@ -3,7 +3,6 @@ package com.abhishek.weatherwizard
 import android.content.Context
 import android.net.ConnectivityManager
 import android.text.format.DateFormat
-import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,9 +22,4 @@ fun getDayFromDateString(dateString: String): String? {
     } catch (e: Exception) {
         null
     }
-}
-
-fun roundTo4DecimalPlaces(value: Double): Double {
-    val d = BigDecimal(value)
-    return d.setScale(4, BigDecimal.ROUND_HALF_UP).toDouble()
 }

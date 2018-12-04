@@ -12,27 +12,18 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import com.abhishek.weatherwizard.R
-import com.abhishek.weatherwizard.data.Optional
+import com.abhishek.weatherwizard.*
 import com.abhishek.weatherwizard.data.repository.livedata.LiveDataStatus
 import com.abhishek.weatherwizard.data.repository.room.WeatherData
-import com.abhishek.weatherwizard.data.repository.room.WeatherDatabase
-import com.abhishek.weatherwizard.gone
-import com.abhishek.weatherwizard.isNetworkAvailable
-import com.abhishek.weatherwizard.visible
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import io.reactivex.Single
-import io.reactivex.SingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
+@SuppressLint("LogNotTimber")
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
@@ -62,31 +53,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btn_retry.setOnClickListener(this)
         resetState()
         iv_loading.visible()
-
-
-        Single.defer {
-            val optional = Optional(WeatherDatabase.getInstance()
-                .weatherDataDao().getAllData())
-            Single.just(optional)
-        }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : SingleObserver<Optional<List<WeatherData>>> {
-                override fun onSuccess(t: Optional<List<WeatherData>>) {
-                    if (t.isEmpty()) {
-                        Log.e(com.abhishek.weatherwizard.TAG, "Data is not there in db")
-                        return
-                    }
-                    Log.d(com.abhishek.weatherwizard.TAG, t.get().toString())
-                }
-
-                override fun onSubscribe(d: Disposable) {
-
-                }
-
-                override fun onError(e: Throwable) {
-                    Log.e(com.abhishek.weatherwizard.TAG, e.message)
-                }
-            })
     }
 
     override fun onClick(view: View?) {
@@ -157,8 +123,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         resetState()
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-                Log.e(com.abhishek.weatherwizard.TAG,
-                    location?.latitude?.toString() + " - " + location?.longitude)
                 if (location != null) {
                     viewModel.getWeatherLiveData(location.latitude, location.longitude)
                         .observe(this, Observer {
@@ -194,11 +158,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         ll_success_ui.visible()
         tv_current_temp.text = getString(R.string.temp_str, data.currentTmp.toInt())
         tv_location.text = data.name
-//        forecastAdapter.updateData(data.forecast.forecastDays.takeLast(4).map {
-//            Pair(Util.getDayFromDateString(it.date) ?: it.date, it.day.avgTemp.toInt())
-//        })
-//        rv_forecast.animate().translationY((0).toFloat()).setDuration(1200L)
-//            .setInterpolator(AccelerateDecelerateInterpolator()).start()
+        forecastAdapter.updateData(
+            listOf(Pair(getDayFromDateString("2018-12-04") ?: "", data.currentTmp.toInt())))
+        rv_forecast.animate().translationY((0).toFloat()).setDuration(1200L)
+            .setInterpolator(AccelerateDecelerateInterpolator()).start()
     }
 
     private fun setUpErrorUI() {
