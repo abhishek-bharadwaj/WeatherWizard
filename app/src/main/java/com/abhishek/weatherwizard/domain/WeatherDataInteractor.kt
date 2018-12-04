@@ -51,6 +51,7 @@ class WeatherDataInteractor {
                         country = apiResponse.location.country,
                         currentTmp = apiResponse.current.temp)
                     Log.v(TAG, "saving data to DB")
+                    weatherDatabase.weatherDataDao().deleteAll()
                     val result =
                         weatherDatabase.weatherDataDao().insertWeatherData(weatherData = data)
                     Log.d(TAG, result.toString())
